@@ -1,0 +1,41 @@
+.img-container {
+    width: 640px;
+    height: 480px;
+    float: left;
+}
+
+.img-preview {
+    width: 200px;
+    height: 200px;
+    float: left;
+    margin-left: 10px;
+}
+
+.file-box{
+    padding: 10px;
+    margin: 10px;
+    background: antiquewhite;
+}
+
+.scan-box{
+    margin: 10px;
+    padding: 10px;
+    background: antiquewhite;
+}
+
+.btn-cls{
+    margin: 5px;
+    border: 1px solid cadetblue;
+}
+
+.util-box{
+    background-color: antiquewhite;
+    padding: 10px;
+    margin: 10px;
+}
+
+.radio-box{
+    padding: 10px;
+    margin: 10px;
+    background: antiquewhite;
+}

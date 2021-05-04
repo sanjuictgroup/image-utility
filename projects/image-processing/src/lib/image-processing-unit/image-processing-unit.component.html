@@ -1,0 +1,173 @@
+<div class="container">
+    <div class="row">
+
+        <!-- Main Heading Start -->
+        <div class="col-md-12 text-center file-box">
+            <h5>Process Image</h5>
+        </div>
+        <!-- Main Heading End -->
+
+        <!-- Image Type Start -->
+        <div class="col-md-12 text-center radio-box">
+            JPEG <input checked class="inner-radio" (change)="imageFormat('jpeg', 'image/jpeg')" type="radio" name="imgType" id="imgType" value="jpeg">
+            &nbsp;&nbsp;
+            PNG  <input class="inner-radio" (change)="imageFormat('png', 'image/png')" type="radio" name="imgType" id="imgType" value="png">
+        </div>
+        <!-- Image Type End -->
+
+        <!-- Image Selector Start -->
+        <div class="col-md-12 text-left file-box">
+            <input #file type="file" name="file" class="form-control" (change)="fileChangeEvent($event)" />
+        </div>
+        <!-- Image Selector End -->
+
+        <div class="col-md-12"><hr></div>
+
+        <div class="col-md-12 alert alert-success alert-dismissible fade show" data-auto-dismiss="500" *ngIf="imageStatusCropped">
+            <strong>Success!</strong> image has been saved successfully.
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+
+        <!-- Util Selector Start -->
+        <div class="col-md-12 util-box">
+           
+            <div class="col-md-3" style="float: left;" align="right">
+                <button class="btn btn-default btn-cls" (click)="rotateLeft()" title="Rotate Left"><i class="fas fa-angle-double-left"></i></button>
+                <button class="btn btn-default btn-cls" (click)="rotateRight()" title="Rotate Right"><i class="fas fa-angle-double-right"></i></button>
+                <button class="btn btn-default btn-cls" (click)="flipHorizontal()" title="Flip Horizontal"><i class="fas fa-arrows-alt-h"></i></button>
+                <button class="btn btn-default btn-cls" (click)="flipVertical()" title="Flip Vertical"><i class="fas fa-arrows-alt-v"></i></button>
+            </div>
+
+            <div class="col-md-4" style="float: left;" align="center">
+                <button class="btn btn-default btn-cls" title="Aspect Ratio" (click)="toggleContainWithinAspectRatio()">{{containWithinAspectRatio?'Fill Aspect Ratio':'Contain Within Aspect Ratio'}}</button>
+                <button class="btn btn-default btn-cls" (click)="resetImage()" title="Reset Image"><i class="fas fa-power-off"></i></button>
+            </div>
+           
+            <div class="col-md-5" style="float: left;" align="left">
+                <table>
+                    <tr>
+                        <td><input class="form-control" [(ngModel)]="rotation" placeholder="Rotation Degree" title="Rotation Degree" type="number" (keyup)="updateRotation()" /> </td>
+                        <td><button title="Zoom In" class="btn btn-default btn-cls" (click)="zoomOut()"><i class="fas fa-minus"></i></button> </td>
+                        <td><button title="Zoom Out" class="btn btn-default btn-cls" (click)="zoomIn()"><i class="fas fa-plus"></i></button></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <!-- Util Selector End -->
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Main Image Start -->
+        <div class="col-md-8 text-left">
+            <image-cropper
+            [imageChangedEvent]="imageChangedEvent"
+            [roundCropper]="false"
+            [canvasRotation]="canvasRotation"
+            [transform]="transform"
+            [resizeToWidth]="356"
+            [cropperMinWidth]="228"
+            format="{{formatType}}"
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded($event)"
+            (cropperReady)="cropperReady($event)"
+            (loadImageFailed)="loadImageFailed()"
+            [alignImage]="'left'"
+            [imageQuality]="90"
+            ></image-cropper>
+        </div>
+
+        <!-- Main Image End -->
+
+        <!-- Side Image Start -->
+        <div class="col-md-4 text-center" *ngIf="croppedImage">
+            <img [src]="croppedImage" [style.border]="croppedImage ? '1px solid black' : 'none'" />
+            <button class="btn btn-cls" (click)="downloadImg()"> <i class="fas fa-download"></i></button>
+            &nbsp;
+            <button class="btn btn-danger btn-cls" (click)="saveImageCropped()">Save</button>
+        </div>
+
+       
+        <!-- Side Image End -->
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Sub Heading Start -->
+        <div class="col-md-12 text-center file-box">
+            <h5>Add Marker in Image</h5>
+        </div>
+        <!-- Sub Heading End -->
+
+        <!-- Marker Selector Start -->
+        <!-- <div class="col-md-12 util-box">
+            
+            <image-drawing
+                [src]="imgUrl"
+                [width]="width" 
+                [height]="height"
+                outputMimeType="'{{formatMime}}'"
+                outputQuality="0.8"
+                
+                [forceSizeCanvas]="true"
+                [forceSizeExport]="true"
+                borderCss="1px solib black" 
+                [enableLoadAnotherImage]="true" 
+                [enableRemoveImage]="true"
+                (save)="save($event)"
+                (cancel)="cancel()"
+                >
+               
+            </image-drawing>
+
+        </div> -->
+        <div class="col-md-12"><hr></div>
+
+        <div class="col-md-12 alert alert-success alert-dismissible fade show" data-auto-dismiss="500" *ngIf="imageStatusCanvased">
+            <strong>Success!</strong> image has been saved successfully.
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+
+
+        <div class="col-md-12 util-box" align="center">
+            <canvas id="mycanvas"></canvas>
+        </div>
+
+      
+
+        <!-- Image Marker Options Type Start -->
+        <div class="col-md-12 text-center radio-box" *ngIf="croppedImage">
+            <div class="col-md-2" style="float: left;"></div>
+
+            <div class="col-md-1" style="float: left;">
+                <button class="btn btn-default btn-cls bg-danger" (click)="red()"><span style="padding: 10px;">&nbsp;</span></button>
+            </div>
+            <div class="col-md-1" style="float: left;">
+                <button class="btn btn-default bg-dark btn-cls" (click)="black()"><span style="padding: 10px;">&nbsp;</span></button>
+            </div>
+            <div class="col-md-1" style="float: left;">
+                <button class="btn btn-default btn-cls bg-white" (click)="white()"><span style="padding: 10px;">&nbsp;</span></button>
+            </div>
+            <div class="col-md-1" style="float: left;">
+                <button class="btn btn-default bg-primary btn-cls" (click)="blue()"><span style="padding: 10px;">&nbsp;</span></button>
+            </div>
+            <div class="col-md-1" style="float: left;">
+                <button class="btn btn-default bg-warning btn-cls" (click)="yellow()"><span style="padding: 10px;">&nbsp;</span></button>
+            </div>
+            <div class="col-md-1" style="float: left;">
+                <button class="btn btn-default btn-cls" (click)="clearCanvas()"><i class="fas fa-trash-alt"></i></button>
+            </div>
+            <div class="col-md-1" style="float: left;">
+                <button class="btn btn-cls" (click)="downloadImgCanvas()"> <i class="fas fa-download"></i></button>
+            </div>
+
+            <div class="col-md-1" style="float: left;">
+                <button class="btn btn-danger btn-cls" (click)="saveImageCanvased()">Save</button>
+            </div>
+            
+            <div class="col-md-2" style="float: left;"></div>
+            
+        </div>
+
+        <!-- Image Marker Options Type End -->
+    </div>
+</div>
