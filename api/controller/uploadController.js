@@ -1,6 +1,5 @@
 exports.imageSaveCropped = async (req, res) =>{
     try{
-
         const imgname = new Date().getTime().toString();
 
         // to declare some path to store your converted image
@@ -30,7 +29,6 @@ exports.imageSaveCropped = async (req, res) =>{
 
 exports.imageSaveCanvased = async (req, res) =>{
     try{
-
         const imgname = new Date().getTime().toString();
 
         // to declare some path to store your converted image
