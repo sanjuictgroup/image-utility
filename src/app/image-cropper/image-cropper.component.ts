@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { ImageCroppedEvent, Dimensions, ImageTransform, base64ToFile } from 'ngx-image-cropper';
 import { fromEvent } from 'rxjs';
-import { switchMap, takeUntil, pairwise } from 'rxjs/operators'
+import { switchMap, takeUntil, pairwise, count } from 'rxjs/operators'
 import { Service } from "../services/service";
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -39,6 +39,7 @@ export class ImageCropperComponent implements OnInit {
     imageStatusCropped = false;
     imageStatusCanvased = false;
     public locale: string = 'en';
+    public stack = [];
     
     constructor(private activateRoute: ActivatedRoute, private router: Router, private service: Service) {
         this.locale = this.getNavigatorLanguage();  
@@ -154,10 +155,13 @@ export class ImageCropperComponent implements OnInit {
      */
     imageFormat(type, mime){
         this.imageChangedEvent = null;
-        this.croppedImage = null;
+        this.croppedImage = false;
         this.fileVariable.nativeElement.value = "";
         this.formatType = type;
         this.formatMime = mime;
+        this.height = 0;
+        this.width = 0;
+        this.clearCanvas();
     }
 
     /**
@@ -347,7 +351,48 @@ export class ImageCropperComponent implements OnInit {
             
                 // strokes the current path with the styles we set earlier
                 this.cx.stroke();
+
+                this.cx.closePath();
+
+                this.stackCanvas();
             }
+    }
+
+    stackCanvas(){
+        const myCanvas = <HTMLCanvasElement> document.getElementById('mycanvas');
+        this.cx = myCanvas.getContext('2d')!;
+        var dataURL = myCanvas.toDataURL(this.formatMime);
+        this.stack.push(dataURL);
+    }
+
+    undo(){
+        console.log();
+
+        const myCanvas = <HTMLCanvasElement> document.getElementById('mycanvas');
+        this.cx = myCanvas.getContext('2d')!;
+
+        let image = new Image();
+    
+        myCanvas.width = this.width;
+        myCanvas.height = this.height;
+       
+        this.cx.lineWidth = 3;
+        this.cx.lineCap = 'round';
+        this.cx.strokeStyle = '#000';
+        image.onload = ()=> {
+            this.cx.drawImage(image, 0, 0, this.width, this.height);
+        }
+        
+        // Remove drawing lines
+        for(var i = 1; i<=this.stack.length; i++){
+            this.stack.pop();
+        }
+
+        if(this.stack.length == 0){
+            image.src = this.croppedImage;
+        }else{
+            image.src = this.stack[this.stack.length - 1];
+        }
     }
 
     /** Download Button in Marker canvas */

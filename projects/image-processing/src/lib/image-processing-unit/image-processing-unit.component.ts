@@ -151,13 +151,16 @@ export class ImageProcessingUnitComponent implements OnInit {
    * On radio select 
    * clear event & set image format
    */
-   public imageFormat(type, mime){
-      this.imageChangedEvent = null;
-      this.croppedImage = null;
-      this.fileVariable.nativeElement.value = "";
-      this.formatType = type;
-      this.formatMime = mime;
-  }
+   imageFormat(type, mime){
+    this.imageChangedEvent = null;
+    this.croppedImage = false;
+    this.fileVariable.nativeElement.value = "";
+    this.formatType = type;
+    this.formatMime = mime;
+    this.height = 0;
+    this.width = 0;
+    this.clearCanvas();
+}
 
   /**
    * On download button click
