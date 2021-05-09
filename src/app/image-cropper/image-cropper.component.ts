@@ -40,6 +40,7 @@ export class ImageCropperComponent implements OnInit {
     imageStatusCanvased = false;
     public locale: string = 'en';
     public stack = [];
+    public stackBack = [];
     
     constructor(private activateRoute: ActivatedRoute, private router: Router, private service: Service) {
         this.locale = this.getNavigatorLanguage();  
@@ -385,6 +386,9 @@ export class ImageCropperComponent implements OnInit {
         
         // Remove drawing lines
         for(var i = 1; i<=this.stack.length; i++){
+            
+            this.stackBack.push(this.stack[i]); 
+
             this.stack.pop();
         }
 
@@ -394,6 +398,26 @@ export class ImageCropperComponent implements OnInit {
             image.src = this.stack[this.stack.length - 1];
         }
     }
+
+//     redo(){
+//         const myCanvas = <HTMLCanvasElement> document.getElementById('mycanvas');
+//         this.cx = myCanvas.getContext('2d')!;
+
+//         let image = new Image();
+    
+//         myCanvas.width = this.width;
+//         myCanvas.height = this.height;
+       
+//         this.cx.lineWidth = 3;
+//         this.cx.lineCap = 'round';
+//         this.cx.strokeStyle = '#000';
+//         image.onload = ()=> {
+//             this.cx.drawImage(image, 0, 0, this.width, this.height);
+//         }
+// console.log(this.stackBack)
+//         console.log(this.stackBack.length)
+//         image.src = this.stackBack[this.stackBack.length - 1];
+//     }
 
     /** Download Button in Marker canvas */
     downloadImgCanvas(){
